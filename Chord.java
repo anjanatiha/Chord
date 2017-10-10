@@ -1,15 +1,18 @@
-package com.company;
+/*
+Created by Anjana Tiha
+Homework 2
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+ */
+
+
+package com.company;
+import javax.swing.*;
+import java.util.*;
 
 import static Misc.Print.print;
 
 public class Chord {
     Node head;
-
     Chord() {
         this.head = null;
     }
@@ -60,16 +63,53 @@ public class Chord {
             }
         }
     }
+
     public void addData(int key, int val){
         System.out.println("Adding key, val: "+ key  + ", "+val);
         Node succNode = succ(key);
         succNode.addVal(val);
 
     }
+    public void deleteNode(int key){
+        Node delNodeTemp = succ(key);
+        Node prevNode = delNodeTemp.prev;
+        Node nextNode = delNodeTemp.next;
+        if (delNodeTemp.nodeID == key){
+            prevNode.next = nextNode;
+            nextNode.prev = prevNode;
+        }
+        else if (prevNode.nodeID == key){
+            prevNode = prevNode.prev;
+            nextNode = delNodeTemp;
+            prevNode.next = nextNode;
+            nextNode.prev = prevNode;
+        }
+
+        else if (nextNode.nodeID == key){
+            prevNode = delNodeTemp;
+            nextNode = nextNode.next;
+            prevNode.next = nextNode;
+            nextNode.prev = prevNode;
+        }
+
+    }
+    public Node getHead(){
+        return this.head;
+    }
+    public int getSize(){
+        Node iter = this.head;
+        int i = 0;
+        while (true) {
+            if (i > 0 && iter == this.head) {
+                break;
+            }
+            iter = iter.next;
+            i++;
+        }
+        return i;
+    }
     public Node succ(int key){
         Node iter = this.head;
-
-
         int i = 0;
         while (true){
             if (i > 0 && iter == head){
@@ -90,7 +130,60 @@ public class Chord {
         System.out.println(iter.data);
         return iter;
     }
+    public void getInter(){
+        Scanner sc = new Scanner(System.in);
+        String choiceStr = JOptionPane.showInputDialog("Please Enter Choice\n0: Exit\n1: Add Node\n2: Delete Node\n3: Add Value\n");
+        int choice = Integer.parseInt(choiceStr);
+        while (true){
+//            System.out.println("Please Enter Choice\n");
+//            System.out.println("0: Exit\n");
+//            System.out.println("1: Add Node\n");
+//            System.out.println("2: Delete Node\n");
+//            System.out.println("3: Add Value\n");
+            switch (choice){
+                case 0:
+                    return;
+                case 1:
+                    addNode();
+                    //printNode();
+                    break;
+                case 2:
+                    choiceStr = JOptionPane.showInputDialog("Please enter NodeID");
+                    int nid = Integer.parseInt(choiceStr);
+                    deleteNode(nid);
+                    printNode();
+                    break;
+                case 3:
+                    choiceStr = JOptionPane.showInputDialog("Please enter data key in integer");
+                    int key = Integer.parseInt(choiceStr);
+                    choiceStr = JOptionPane.showInputDialog("Please enter data value in integer");
+                    int val = Integer.parseInt(choiceStr);
+                    addData(key,val);
+                    printNode();
+                    break;
+                default:
+                    System.out.println("No choice found");
+                    break;
+            }
+        }
 
+    }
+
+    public void printNode() {
+        Node iter = this.head;
+        int i = 0;
+        System.out.print("All node Data: ");
+        while (true) {
+            if (i > 0 && iter == this.head) {
+                break;
+            } else {
+                System.out.print(iter.data + " ");
+            }
+            iter = iter.next;
+            i++;
+        }
+        System.out.print("\n\n");
+    }
 
 
     class Node {
@@ -108,11 +201,23 @@ public class Chord {
         }
 
         public void addVal(int val) {
-            this.data.add(val);
-            Collections.sort(this.data);
-            this.min = data.indexOf(Collections.min(data));
-            this.max = data.indexOf(Collections.max(data));
+            if (!data.contains(val)) {
+                this.data.add(val);
+                Collections.sort(this.data);
+                this.min = data.indexOf(Collections.min(data));
+                this.max = data.indexOf(Collections.max(data));
+            }
 
+        }
+        public List<Integer> getData(){
+            return data;
+        }
+        public String getDataStr(){
+            String str = " [";
+            for (int val : data) {
+                str = str + val + " , ";
+            }
+            return str.substring(0,str.length()-3) + " ] ";
         }
         public void addValList(List<Integer> val) {
             this.data.addAll(val);
@@ -150,32 +255,24 @@ public class Chord {
         }
     }
 
-    public void printNode() {
-        Node iter = this.head;
-        int i = 0;
-        System.out.print("All node Data: ");
-        while (true) {
-            if (i > 0 && iter == this.head) {
-                break;
-            } else {
-                System.out.print(iter.data + " ");
-            }
-            iter = iter.next;
-            i++;
-        }
-        System.out.print("\n\n");
-    }
+
 
     public static void main(String[] args) {
         Chord chord = new Chord();
-        chord.addNode();
-        chord.addNode();
-        chord.addNode();
-        chord.addNode();
-        chord.addData(60,60);
-        chord.addData(32,32);
-        chord.addData(51,51);
-        chord.printNode();
+//        chord.addNode();
+//        chord.addNode();
+//        chord.addNode();
+//        chord.addNode();
+//        chord.addData(60,60);
+//        chord.addData(32,32);
+//        chord.addData(51,51);
+//        chord.printNode();
+        String test1, test2, test3, avg;
+
+
+
+        chord.getInter();
+
 
 
     }
