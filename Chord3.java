@@ -9,15 +9,19 @@ Data: 10/11/2017
 
 
 package com.company;
+
 import javax.swing.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static Misc.Print.print;
 
-public class Chord {
+public class Chord3 {
     Node head;
-
-    Chord() {
+    Chord3 chord = new Chord3();
+    Chord3() {
         this.head = null;
     }
 
@@ -31,6 +35,8 @@ public class Chord {
             this.head = newNode;
             this.head.next = this.head;
             this.head.prev = this.head;
+            this.chord.head = this.head;
+
         }
         else
         {
@@ -127,7 +133,6 @@ public class Chord {
         return i;
     }
 
-
     //return successor node
     public Node succ(int key){
         Node iter = this.head;
@@ -154,7 +159,7 @@ public class Chord {
 
     // Inter input for adding, deleting node and adding data
     public void getInter(){
-        Draw2 drawPanel = new Draw2(head, getSize());
+        Draw3 drawPanel = new Draw3(chord);
         while (true){
             String choiceStr = JOptionPane.showInputDialog("Please Enter Choice\n0: Exit\n1: Add Node\n2: Delete Node\n3: Add Value\n");
             int choice = Integer.parseInt(choiceStr);
@@ -165,7 +170,7 @@ public class Chord {
                 case 1:
                     addNode();
                     printNetwork();
-                    drawPanel.rund(this.head, getSize());
+                    drawPanel.display(chord);
 
                     break;
                 case 2:
@@ -297,7 +302,7 @@ public class Chord {
 
 
     public static void main(String[] args) {
-        Chord chord = new Chord();
+        Chord3 chord = new Chord3();
         chord.getInter();
 
 

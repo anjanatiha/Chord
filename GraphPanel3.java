@@ -47,7 +47,7 @@ public class GraphPanel3 extends JComponent {
         chord.addData(60,60);
         chord.addData(32,32);
         chord.addData(51,51);
-        chord.printNode();
+        chord.printNetwork();
     }
 
     public static void main(String[] args) throws Exception {

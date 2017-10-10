@@ -9,16 +9,22 @@ Data: 10/11/2017
 
 
 package com.company;
+
 import javax.swing.*;
-import java.util.*;
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Random;
 
 import static Misc.Print.print;
 
-public class Chord {
+public class Chord2 extends JPanel{
     Node head;
 
-    Chord() {
+    Chord2() {
         this.head = null;
+        getInter();
     }
 
 
@@ -35,7 +41,7 @@ public class Chord {
         else
         {
             Node succNode = succ(newNode.nodeID);
-            print(succNode.nodeID);
+            System.out.println(succNode.nodeID);
             if (newNode.nodeID != succNode.nodeID) {
                 Node prevNode = succNode.prev;
                 if (succNode == this.head){
@@ -112,7 +118,7 @@ public class Chord {
     }
 
     //get size or number of machines of the chord network
-    public int getSize(){
+    public int getNetworkSize(){
         Node iter = this.head;
         if (iter == null)
             return 1;
@@ -154,19 +160,16 @@ public class Chord {
 
     // Inter input for adding, deleting node and adding data
     public void getInter(){
-        Draw2 drawPanel = new Draw2(head, getSize());
         while (true){
             String choiceStr = JOptionPane.showInputDialog("Please Enter Choice\n0: Exit\n1: Add Node\n2: Delete Node\n3: Add Value\n");
             int choice = Integer.parseInt(choiceStr);
-            print(choice);
             switch (choice){
                 case 0:
                     return;
                 case 1:
                     addNode();
+                    display();
                     printNetwork();
-                    drawPanel.rund(this.head, getSize());
-
                     break;
                 case 2:
                     choiceStr = JOptionPane.showInputDialog("Please enter NodeID");
@@ -249,7 +252,6 @@ public class Chord {
             for (int val : data) {
                 str = str + val + " , ";
             }
-            print("asdas  "+ str);
             return str.substring(0,str.length()-3) + " ] ";
         }
 
@@ -294,10 +296,79 @@ public class Chord {
         }
     }
 
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(
+                RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(Color.black);
+
+       int SIZE = 256;
+//        private int a = SIZE / 2;
+//        private int b = a;
+//        private int r = 4 * SIZE / 5;
+        int size = getNetworkSize();
+        this.setPreferredSize(new Dimension(SIZE, SIZE));
+
+
+        int a = getWidth() / 2;
+        int b = getHeight() / 2;
+        int m = Math.min(a, b);
+        int r = 4 * m / 5;
+        int r2 = Math.abs(m - r) / 2;
+
+        if (this.head==null){
+            g2d.drawString("No node found", a, b);
+            return;
+        }
+
+
+        g2d.drawOval(a - r, b - r, 2 * r, 2 * r);
+        g2d.setColor(Color.lightGray);
+
+
+        Node iter = this.head;
+
+        int i = 0;
+        while (true) {
+            if (i > 0 && iter == head) {
+                break;
+            } else {
+                System.out.println("asdasd"+ iter.data);
+                double t = 2 * Math.PI * i / size;
+                int x = (int) Math.round(a + r * Math.cos(t));
+                int y = (int) Math.round(b + r * Math.sin(t));
+                g2d.fillOval(x - r2, y - r2, 2 * r2, 2 * r2);
+                g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                g2d.drawString(iter.getDataStr(), x - r2-10, y - r2-10);
+                iter = iter.next;
+                System.out.print("asda");
+                i++;
+            }
+        }
+    }
+
+    public static void create() {
+        JFrame f = new JFrame();
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        f.add(new Chord());
+        f.pack();
+        f.setVisible(true);
+    }
+    public static void display(){
+        EventQueue.invokeLater(new Runnable() {
+            @Override
+            public void run() {
+                create();
+            }
+        });
+    }
 
 
     public static void main(String[] args) {
-        Chord chord = new Chord();
+        Chord2 chord = new Chord2();
         chord.getInter();
 
 
