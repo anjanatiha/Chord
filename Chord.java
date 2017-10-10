@@ -1,73 +1,183 @@
 package com.company;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
+import static Misc.Print.print;
+
 public class Chord {
-    int limitNumber;
-    LinkedList<com.company.Node> nodeList;
+    Node head;
 
-    Chord(int limitNumber) {
-        this.limitNumber = limitNumber;
-        nodeList = new LinkedList<>();
-    }
-
-    public void randomChordRing() {
-        int randNum = random(limitNumber);
-        for (int i = 0; i < randNum; i++) {
-            //nodeList.add()
-        }
-
-
+    Chord() {
+        this.head = null;
     }
 
     public void addNode() {
-        int newNodeID = genID(this.limitNumber);
-        com.company.Node succNode = succ(newNodeID);
-        com.company.Node newNode = new com.company.Node();
-        newNode.addItem(newNodeID);
-        succNode.getPrevList().setNextList(newNode);
-        succNode.setNextList(newNode);
-    }
-
-    public void addData(int key, int val) {
-        if (nodeList == null) {
-            return;
+        Node newNode = new Node();
+        System.out.println("Adding new Node: " + newNode.data);
+        if (this.head == null) {
+            this.head = newNode;
+            this.head.next = this.head;
+            this.head.prev = this.head;
         }
-        com.company.Node nodeIter = nodeList.getFirst();
-        while (nodeIter != null) {
-            if (nodeIter.getSmallestKey() > key) {
-                nodeIter.addItem(key, val);
+        else
+        {
+            Node succNode = succ(newNode.nodeID);
+            print(succNode.nodeID);
+            if (newNode.nodeID != succNode.nodeID) {
+                Node prevNode = succNode.prev;
+                if (succNode == this.head){
+                    if (newNode.nodeID < this.head.nodeID){
+                        newNode.next = succNode;
+                        newNode.prev = prevNode;
+                        prevNode.next = newNode;;
+                        succNode.prev = newNode;
+                        this.head = newNode;
+                        if (succNode.min <= newNode.max) {
+                            List<Integer> removeData = succNode.removeValList(newNode.max);
+                            newNode.addValList(removeData);
+                        }
+                    }
+                    else {
+                        newNode.prev = prevNode;
+                        newNode.next = succNode;
+                        succNode.prev = newNode;
+                        prevNode.next = newNode;
+                    }
+                }
+                else {
+                    newNode.next = succNode;
+                    newNode.prev = prevNode;
+                    succNode.prev = newNode;
+                    prevNode.next = newNode;
+                    if (succNode.min <= newNode.max) {
+                        List<Integer> removeData = succNode.removeValList(newNode.max);
+                        newNode.addValList(removeData);
+                    }
+                }
             }
-            nodeIter = nodeIter.getNextList();
         }
     }
+    public void addData(int key, int val){
+        System.out.println("Adding key, val: "+ key  + ", "+val);
+        Node succNode = succ(key);
+        succNode.addVal(val);
 
-    public int findData(int key) {
-        com.company.Node dataNode = succ(key);
-        com.company.Node.Item dataItem = dataNode.findNodeKey(key);
-        return dataItem.getVal();
     }
+    public Node succ(int key){
+        Node iter = this.head;
 
-    public com.company.Node succ(int id) {
-        com.company.Node nodeIter = nodeList.getFirst();
-        while (nodeIter != null) {
-            if (nodeIter.getNodeId() > id) {
+
+        int i = 0;
+        while (true){
+            if (i > 0 && iter == head){
                 break;
             }
-            nodeIter = nodeIter.getNextList();
+            else {
+                if (key <= iter.nodeID){
+                    break;
+                }
+                else {
+                    iter = iter.next;
+                }
+            }
+            i++;
+
         }
-        return nodeIter;
+        System.out.print("key: ");
+        System.out.println(iter.data);
+        return iter;
     }
 
-    public int genID(int bound) {
-        int ID = random(bound);
-        return ID;
+
+
+    class Node {
+        int nodeID, min, max;
+        Node prev, next;
+        List<Integer> data = new ArrayList<Integer>();
+
+        Node() {
+            this.nodeID = genID(100);
+            this.data.add(nodeID);
+            this.min = data.indexOf(Collections.min(data));
+            this.max = data.indexOf(Collections.max(data));
+            this.next = null;
+            this.prev = null;
+        }
+
+        public void addVal(int val) {
+            this.data.add(val);
+            Collections.sort(this.data);
+            this.min = data.indexOf(Collections.min(data));
+            this.max = data.indexOf(Collections.max(data));
+
+        }
+        public void addValList(List<Integer> val) {
+            this.data.addAll(val);
+            Collections.sort(data);
+        }
+        public int removeVal(int val) {
+            this.data.remove(val);
+            Collections.sort(data);
+            this.min = data.indexOf(Collections.min(data));
+            this.max = data.indexOf(Collections.max(data));
+            this.nodeID = this.max;
+            return val;
+        }
+
+        public List<Integer> removeValList(int val) {
+            List<Integer> removedData = new ArrayList<Integer>();
+            for (int ival : this.data) {
+                if (ival <= val) {
+                    removedData.add(ival);
+                    this.data.remove(ival);
+                }
+                else
+                    break;
+            }
+            Collections.sort(data);
+            return removedData;
+        }
+
+
+
+        public int genID(int bound) {
+            Random rand = new Random();
+            int ID = rand.nextInt(bound) + 1;
+            return ID;
+        }
     }
 
-    public int random(int bound) {
-        Random rand = new Random();
-        int randNum = rand.nextInt(bound) + 1;
-        return randNum;
+    public void printNode() {
+        Node iter = this.head;
+        int i = 0;
+        System.out.print("All node Data: ");
+        while (true) {
+            if (i > 0 && iter == this.head) {
+                break;
+            } else {
+                System.out.print(iter.data + " ");
+            }
+            iter = iter.next;
+            i++;
+        }
+        System.out.print("\n\n");
     }
+
+    public static void main(String[] args) {
+        Chord chord = new Chord();
+        chord.addNode();
+        chord.addNode();
+        chord.addNode();
+        chord.addNode();
+        chord.addData(60,60);
+        chord.addData(32,32);
+        chord.addData(51,51);
+        chord.printNode();
+
+
+    }
+
 }
