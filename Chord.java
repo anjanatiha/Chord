@@ -13,15 +13,15 @@ import javax.swing.*;
 import java.util.*;
 
 import static Misc.Print.print;
+import static com.company.Draw.display;
 
 public class Chord {
-    Node head;
+    private Node head;
+    private String[] chordString;
 
     Chord() {
         this.head = null;
     }
-
-
 
     //Add new Node by generating random number
     public void addNode() {
@@ -83,25 +83,18 @@ public class Chord {
 
     // Delete Node
     public void deleteNode(int key){
-        Node delNodeTemp = succ(key);
-        Node prevNode = delNodeTemp.prev;
-        Node nextNode = delNodeTemp.next;
-        if (delNodeTemp.nodeID == key){
+        Node delNode = findNodeByKey(key);
+        if (delNode!=null){
+            Node prevNode = delNode.prev;
+            Node nextNode = delNode.next;
             prevNode.next = nextNode;
             nextNode.prev = prevNode;
+            if (delNode==this.head){
+                this.head = nextNode;
+            }
         }
-        else if (prevNode.nodeID == key){
-            prevNode = prevNode.prev;
-            nextNode = delNodeTemp;
-            prevNode.next = nextNode;
-            nextNode.prev = prevNode;
-        }
-
-        else if (nextNode.nodeID == key){
-            prevNode = delNodeTemp;
-            nextNode = nextNode.next;
-            prevNode.next = nextNode;
-            nextNode.prev = prevNode;
+        else {
+            System.out.println("Node ID not found");
         }
 
     }
@@ -125,6 +118,30 @@ public class Chord {
             i++;
         }
         return i;
+    }
+
+    //return matching node
+    public Node findNodeByKey(int key){
+        Node iter = this.head;
+        if (iter.nodeID==key)
+            return  iter;
+        int i = 0;
+        while (true){
+            if (i > 0 && iter == head){
+                break;
+            }
+            else {
+                if (key == iter.nodeID){
+                    return iter;
+                }
+                else {
+                    iter = iter.next;
+                }
+            }
+            i++;
+
+        }
+        return null;
     }
 
 
@@ -151,10 +168,28 @@ public class Chord {
         System.out.println(iter.data);
         return iter;
     }
+    public String[] getChordString(){
+        Node iter = this.head;
+        chordString = new String[getSize()];
+        int i = 0;
+        int n = 0;
+        while (true) {
+            if (i > 0 && iter == this.head) {
+                break;
+            } else {
+                chordString[n] = iter.getDataStr();
+                //System.out.println(chordString[n]);
+            }
+            iter = iter.next;
+            i++;
+            n++;
+        }
+        return chordString;
+
+    }
 
     // Inter input for adding, deleting node and adding data
     public void getInter(){
-        Draw2 drawPanel = new Draw2(head, getSize());
         while (true){
             String choiceStr = JOptionPane.showInputDialog("Please Enter Choice\n0: Exit\n1: Add Node\n2: Delete Node\n3: Add Value\n");
             int choice = Integer.parseInt(choiceStr);
@@ -165,14 +200,16 @@ public class Chord {
                 case 1:
                     addNode();
                     printNetwork();
-                    drawPanel.rund(this.head, getSize());
-
+                    chordString = getChordString();
+                    display(chordString);
                     break;
                 case 2:
                     choiceStr = JOptionPane.showInputDialog("Please enter NodeID");
                     int nid = Integer.parseInt(choiceStr);
                     deleteNode(nid);
                     printNetwork();
+                    chordString = getChordString();
+                    display(chordString);
                     break;
                 case 3:
                     choiceStr = JOptionPane.showInputDialog("Please enter data key in integer");
@@ -181,6 +218,8 @@ public class Chord {
                     int val = Integer.parseInt(choiceStr);
                     addData(key,val);
                     printNetwork();
+                    chordString = getChordString();
+                    display(chordString);
                     break;
                 default:
                     System.out.println("No choice found");
@@ -245,12 +284,20 @@ public class Chord {
 
         // get data in node in string format
         public String getDataStr(){
-            String str = " [";
+            String str = " [ ";
+            int nodeLen = data.size();
+            int i = 0;
             for (int val : data) {
-                str = str + val + " , ";
+                str = str + val;
+                if (i<nodeLen-1){
+                    str = str + " , ";
+                 }
+                 else {
+                    str = str + " ] ";
+                }
+                i++;
             }
-            print("asdas  "+ str);
-            return str.substring(0,str.length()-3) + " ] ";
+            return str;
         }
 
         // add list of data values to new node after change in node organization
