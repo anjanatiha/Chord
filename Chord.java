@@ -18,7 +18,6 @@ import java.util.Random;
 
 import static Misc.Print.print;
 import static com.company.Draw.display;
-import static jdk.nashorn.internal.runtime.ListAdapter.create;
 
 public class Chord {
     private Node head;
